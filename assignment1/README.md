@@ -37,7 +37,7 @@ If you choose to write this project from scratch, you need todo
 
 #### 3.2 Requirements
 
-- **Do not** use sklearn or other machine learning library,  you are only permitted with numpy, pandas, matplotlib, and [Standard Library](https://docs.python.org/3/library/index.html), you are required to **write this project from scratch.**
+- **Do not** use sklearn or other machine learning library,  you are only permitted with `numpy, pandas, matplotlib`, and [Standard Library](https://docs.python.org/3/library/index.html), you are required to **write this project from scratch.**
 - You are allowed to discuss with other students, but you are **not allowed to plagiarize the code**, we will use automatic system to determine the similarity of your programs, once detected, both of you will get **zero** mark for this project.
 
 ### 4 Submission

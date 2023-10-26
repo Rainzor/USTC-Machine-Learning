@@ -23,23 +23,66 @@ class LogisticRegression:
         # Implement the sigmoid function.
         ################################################################################
         
-        pass  # Remove this line when you write the code
-        
+        return 1.0 / (1 + np.exp(-x) )
+
         ################################################################################
         #                                 END OF YOUR CODE                             #
         ################################################################################
+    
+    def loss(self, X, y):
+        loss_val = 0
+
+        # for i in range(y.size):
+        #     t = np.dot(self.coef_, X[i])
+        #     loss_val += np.log(1+np.exp(t))-y[i]*t
+        t = np.dot(X, self.coef_)
+        loss_val += np.sum(np.log(1+np.exp(t)))
+        loss_val -= np.dot(y, t)
+
+        if self.penalty == "l1":
+            return loss_val + self.gamma*np.sum(np.abs(self.coef_))
+        else:
+            return loss_val + 0.5*self.gamma*np.sum(self.coef_**2)
+
+    def loss_gradient(self, X, y):
+        """
+        Compute gradient of the loss with respect to w. The gradient of L2 loss is as follows:
+
+        Parameters:
+        ----------
+        - X: numpy array of shape (n_samples, n_features), input data.
+        - y: numpy array of shape (n_samples,), target data.
+
+        Returns
+        -------
+        - loss_grd: numpy array of shape (n_features,), gradient of the loss with respect to w.
+        """
+
+
+        # loss_grd = np.zeros(X.shape[1])
+        # for x_i,y_i in X,y:
+        #     loss_grd -= x_i*(1.0/.exp(np.dot(self.w, x_i))*(1+np)+y_i-1)
+        t = np.dot(X, self.coef_)
+        loss_grd = np.dot(X.T, self.sigmoid(t)-y)
+        if self.penalty == "l1":
+            return loss_grd + self.gamma*np.sign(self.coef_)
+        else:
+            return loss_grd + self.gamma*self.coef_
+
 
     def fit(self, X, y, lr=0.01, tol=1e-7, max_iter=1e7):
         """
         Fit the regression coefficients via gradient descent or other methods 
         
         Parameters:
+        ----------
         - X: numpy array of shape (n_samples, n_features), input data.
         - y: numpy array of shape (n_samples,), target data.
         - lr: float, learning rate for gradient descent.
         - tol: float, tolerance to decide convergence of gradient descent.
         - max_iter: int, maximum number of iterations for gradient descent.
         Returns:
+        -------
         - losses: list, a list of loss values at each iteration.        
         """
         # If fit_intercept is True, add an intercept column
@@ -60,8 +103,22 @@ class LogisticRegression:
         # 3. Check for convergence
         ################################################################################
 
-        pass  # Remove this line when you write the code
-        
+        err=float('inf')
+        count=0
+        while count<max_iter or err > tol:
+            loss = self.loss(X, y)
+            losses.append(loss)
+            grad = self.loss_gradient(X, y)
+            self.coef_ -= lr*grad
+            err = np.linalg.norm(grad)
+            count+=1
+            if(count%10000==0):
+                print("iter: ",count," loss: ",loss," err: ",err)
+            if count==max_iter:
+                print("Reach max_iter")
+                break
+        return losses
+            
         ################################################################################
         #                                 END OF YOUR CODE                             #
         ################################################################################
@@ -89,8 +146,10 @@ class LogisticRegression:
         # Task3: Apply the sigmoid function to compute prediction probabilities.
         ################################################################################
 
-        pass  # Remove this line when you write the code
-        
+        probs = self.sigmoid(linear_output)
+        res = np.zeros(probs.shape)
+        res[probs>0.5] = 1
+        return res
         ################################################################################
         #                                 END OF YOUR CODE                             #
         ################################################################################
